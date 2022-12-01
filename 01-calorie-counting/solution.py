@@ -38,10 +38,14 @@ class Expedition:
     def find_elf_carried_most_calories(self) -> int:
         return self.calculated_members[max(self.calculated_members, key=self.calculated_members.get)]
 
+    def sum_of_top_tree_elves(self) -> int:
+        calories = dict(sorted(self.calculated_members.items(), key=lambda x: x[1], reverse=True))
+        return sum(list(calories.values())[:3])
+
 
 if __name__ == "__main__":
     input_lines = read_input()
 
     expedition = Expedition()
     expedition.create(input_lines)
-    print(expedition.find_elf_carried_most_calories())
+    print(expedition.find_elf_carried_most_calories(), expedition.sum_of_top_tree_elves())
