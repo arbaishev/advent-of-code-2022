@@ -44,6 +44,45 @@ class Decrypter:
         return decrypted_moves
 
 
+class TwoStepDecrypter(Decrypter):
+    class Shapes(Decrypter.Shapes):
+        ROCK = "A"
+        PAPER = "B"
+        SCISSORS = "C"
+
+    class RoundResult:
+        LOST = "X"
+        DRAW = "Y"
+        WIN = "Z"
+
+    def decrypt_strategy(self, encrypted_moves):
+        decrypted_moves = []
+        for line in encrypted_moves:
+            first_player_shape, desired_round_result = line.split(" ")
+            decrypted_first_player_move = self._decrypt_move(first_player_shape)
+            second_player_move = self.get_move_based_on_result(decrypted_first_player_move, desired_round_result)
+            decrypted_moves.append((decrypted_first_player_move, second_player_move))
+        return decrypted_moves
+
+    def get_move_based_on_result(self, first_player_move, desired_round_result):
+        if desired_round_result == self.RoundResult.DRAW:
+            return first_player_move
+        if desired_round_result == self.RoundResult.WIN:
+            if first_player_move == Shape.ROCK:
+                return Shape.PAPER
+            if first_player_move == Shape.PAPER:
+                return Shape.SCISSORS
+            if first_player_move == Shape.SCISSORS:
+                return Shape.ROCK
+        if desired_round_result == self.RoundResult.LOST:
+            if first_player_move == Shape.ROCK:
+                return Shape.SCISSORS
+            if first_player_move == Shape.PAPER:
+                return Shape.ROCK
+            if first_player_move == Shape.SCISSORS:
+                return Shape.PAPER
+
+
 class Game:
     class Result(Enum):
         LOST = 0
@@ -76,3 +115,6 @@ if __name__ == "__main__":
     input_lines = read_input()
     strategy = Decrypter().decrypt_strategy(input_lines)
     print(Game(strategy).calculate_total_score_second_player())
+
+    second_part_strategy = TwoStepDecrypter().decrypt_strategy(input_lines)
+    print(Game(second_part_strategy).calculate_total_score_second_player())
