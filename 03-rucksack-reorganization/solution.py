@@ -46,7 +46,25 @@ class PriorityCalculator:
             total_priority += calculate_items_priority(intersection_compartments)
         return total_priority
 
+    def calculate_total_priority_into_group(self):
+        total_priority = 0
+        assert len(self.rucksacks) % 3 == 0
+        groups = [self.rucksacks[i : i + 3] for i in range(0, len(self.rucksacks), 3)]
+        for group in groups:
+            assert len(group) == 3
+            unique_rucksack_items_of_each_elf = list(
+                map(lambda rucksack: set(rucksack), group)
+            )
+            common_items_in_group = unique_rucksack_items_of_each_elf[0].intersection(
+                unique_rucksack_items_of_each_elf[1].intersection(
+                    unique_rucksack_items_of_each_elf[2]
+                )
+            )
+            total_priority += calculate_items_priority(common_items_in_group)
+        return total_priority
+
 
 if __name__ == "__main__":
     input_lines = read_input()
     print(PriorityCalculator(input_lines).calculate_total_priority())
+    print(PriorityCalculator(input_lines).calculate_total_priority_into_group())
